@@ -7,7 +7,6 @@ echo "=========================================="
 
 # Start the backend server in the background
 echo "🚀 Starting backend server..."
-cd backend
 go run main.go &
 BACKEND_PID=$!
 

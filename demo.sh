@@ -25,8 +25,7 @@ echo ""
 
 # Start backend
 echo "🚀 Starting backend server..."
-cd backend
-go run main-test.go &
+go run main.go &
 BACKEND_PID=$!
 
 # Wait for backend to start
@@ -113,7 +112,7 @@ echo "   4. View the success message"
 echo "   5. Check registrations at http://localhost:8080/api/registrations"
 echo ""
 echo "🛑 To stop the demo:"
-echo "   Press Ctrl+C or run: pkill -f 'go run main-test.go' && pkill -f 'npm start'"
+echo "   Press Ctrl+C or run: pkill -f 'go run main.go' && pkill -f 'npm start'"
 echo ""
 
 # Function to cleanup on exit

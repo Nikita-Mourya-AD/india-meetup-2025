@@ -6,7 +6,6 @@ echo "================================================"
 
 # Build backend
 echo "📦 Building backend..."
-cd backend
 go mod tidy
 go build -o main .
 echo "✅ Backend built successfully"
@@ -28,6 +27,6 @@ echo "2. Connect repository to Cloud Run"
 echo "3. Deploy automatically"
 echo ""
 echo "📁 Build artifacts:"
-echo "   - backend/main (Go binary)"
+echo "   - main (Go binary)"
 echo "   - frontend/build (React build)"
 echo "   - Dockerfiles ready for Cloud Run"
