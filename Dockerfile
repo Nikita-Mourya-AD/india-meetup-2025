@@ -28,6 +28,9 @@ WORKDIR /root/
 # Copy the binary from the builder stage
 COPY --from=builder /app/main .
 
+# Copy the static files (React frontend)
+COPY --from=builder /app/static ./static
+
 # Expose port 8080
 EXPOSE 8080
 
