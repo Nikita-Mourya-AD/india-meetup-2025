@@ -13,6 +13,7 @@ dist/
 
 # Go binary
 backend/main
+main
 
 # Service account keys
 service-account-key.json
