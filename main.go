@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"strings"
 	"sync"
 	"time"
 
@@ -56,7 +55,7 @@ func main() {
 	r.HandleFunc("/health", healthHandler).Methods("GET")
 
 	// Serve static files (React frontend)
-	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))))
+	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static/static/"))))
 	
 	// Serve React app for all other routes (SPA routing)
 	r.PathPrefix("/").HandlerFunc(serveReactApp)
@@ -90,13 +89,7 @@ func healthHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func serveReactApp(w http.ResponseWriter, r *http.Request) {
-	// Check if the request is for a static file
-	if strings.HasPrefix(r.URL.Path, "/static/") {
-		http.FileServer(http.Dir("./static/")).ServeHTTP(w, r)
-		return
-	}
-
-	// For all other routes, serve the React app's index.html
+	// For all routes, serve the React app's index.html
 	indexPath := filepath.Join("./static", "index.html")
 	
 	// Check if index.html exists
