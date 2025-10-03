@@ -25,8 +25,8 @@ const RegistrationForm = ({ onSuccess }) => {
     setError('');
 
     try {
-      // Get the backend URL from environment or use localhost for development
-      const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8080';
+      // Use relative URL since frontend and backend are served from same service
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || '';
       
       const response = await axios.post(`${backendUrl}/api/register`, formData);
       
