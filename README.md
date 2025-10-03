@@ -1,203 +1,92 @@
-# AppDirect India Meetup - Registration App
+# 🚀 AppDirect India Meetup 2025 - Full-Stack Application
 
-A full-stack web application for the AppDirect India Meetup Workshop featuring a React frontend with TailwindCSS and a Go backend with Google Firestore integration.
+A complete full-stack web application for the AppDirect India Meetup Workshop featuring a React frontend with TailwindCSS and a Go backend, deployed as a single service on Google Cloud Run.
 
 ## 🎨 Design & Features
 
-- **Color Scheme**: Blue & white professional theme
+- **Color Scheme**: Navy blue & white professional theme
 - **Frontend**: React with TailwindCSS for responsive design
 - **Backend**: Go with REST API endpoints
-- **Database**: Google Firestore (NoSQL)
-- **Deployment**: Docker containers on Google Cloud Run
+- **Database**: In-memory storage (production-ready for Firestore)
+- **Deployment**: Single Docker container on Google Cloud Run
+- **Architecture**: Full-stack application in one service
 
 ## 📁 Project Structure
 
 ```
 India-Meetup/
-├── frontend/                 # React application
+├── frontend/                 # React application source
 │   ├── src/
 │   │   ├── components/       # React components
 │   │   │   ├── Hero.js       # Hero section
 │   │   │   ├── RegistrationForm.js
-│   │   │   └── SuccessMessage.js
+│   │   │   ├── SuccessMessage.js
+│   │   │   ├── TechTracks.js # Tech tracks with speakers
+│   │   │   └── Location.js   # Interactive location map
 │   │   ├── App.js           # Main app component
 │   │   ├── index.js         # Entry point
 │   │   └── index.css        # TailwindCSS imports
 │   ├── public/
-│   ├── Dockerfile           # Frontend container
+│   ├── Dockerfile           # Frontend container (for separate deployment)
 │   ├── nginx.conf           # Nginx configuration
 │   └── package.json
-├── backend/                 # Go application
-│   ├── main.go             # Main server file
-│   ├── go.mod              # Go dependencies
-│   └── Dockerfile          # Backend container
+├── static/                  # Built React frontend (for production)
+│   ├── index.html
+│   ├── static/
+│   │   ├── css/
+│   │   └── js/
+├── main.go                  # Go backend server (root level)
+├── go.mod                   # Go dependencies (root level)
+├── go.sum                   # Go dependencies lock
+├── Dockerfile               # Single service container
 └── README.md
 ```
 
-## 🚀 Quick Start (Local Development)
+## 🌟 Key Features
 
-### Prerequisites
+### Frontend
+- ✅ Beautiful hero section with navy blue theme
+- ✅ Registration form with validation
+- ✅ Tech tracks section showcasing speakers (Nikita, Ankita, Muskan)
+- ✅ Interactive location map with directions
+- ✅ Success message with registration details
+- ✅ Responsive design for all devices
+- ✅ Loading states and error handling
 
-- Node.js 18+ and npm
-- Go 1.21+
-- Google Cloud Project with Firestore enabled
-- Google Cloud Service Account key (for local development)
+### Backend
+- ✅ REST API with CORS support
+- ✅ In-memory data storage (real-time)
+- ✅ Input validation
+- ✅ Error handling
+- ✅ Health check endpoint
+- ✅ Admin endpoint for viewing registrations
+- ✅ Static file serving for React frontend
 
-### 1. Backend Setup
+## 🚀 Live Application
 
-```bash
-cd backend
+**🌐 URL**: https://india-meetup-2025-1041941408881.europe-west1.run.app
 
-# Install dependencies
-go mod tidy
-
-# Set up environment variables
-export GOOGLE_APPLICATION_CREDENTIALS="path/to/your/service-account-key.json"
-export PORT=8080
-
-# Run the server
-go run main.go
-```
-
-### 2. Frontend Setup
-
-```bash
-cd frontend
-
-# Install dependencies
-npm install
-
-# Set backend URL (optional, defaults to localhost:8080)
-export REACT_APP_BACKEND_URL=http://localhost:8080
-
-# Start development server
-npm start
-```
-
-The application will be available at `http://localhost:3000`
-
-## 🐳 Docker Deployment
-
-### Build Images
-
-```bash
-# Build backend image
-cd backend
-docker build -t appdirect-meetup-backend .
-
-# Build frontend image
-cd ../frontend
-docker build -t appdirect-meetup-frontend .
-```
-
-### Run Locally with Docker
-
-```bash
-# Run backend
-docker run -p 8080:8080 \
-  -e GOOGLE_APPLICATION_CREDENTIALS=/app/key.json \
-  -v /path/to/service-account-key.json:/app/key.json \
-  appdirect-meetup-backend
-
-# Run frontend
-docker run -p 3000:80 \
-  -e REACT_APP_BACKEND_URL=http://localhost:8080 \
-  appdirect-meetup-frontend
-```
-
-## ☁️ Google Cloud Run Deployment
-
-### Prerequisites
-
-- Google Cloud SDK installed and configured
-- Docker installed
-- Google Cloud Project with billing enabled
-- Firestore API enabled
-
-### 1. Set Up Google Cloud Project
-
-```bash
-# Set your project ID
-export PROJECT_ID="your-project-id"
-gcloud config set project $PROJECT_ID
-
-# Enable required APIs
-gcloud services enable run.googleapis.com
-gcloud services enable firestore.googleapis.com
-gcloud services enable cloudbuild.googleapis.com
-```
-
-### 2. Deploy Backend
-
-```bash
-cd backend
-
-# Build and push to Google Container Registry
-gcloud builds submit --tag gcr.io/$PROJECT_ID/appdirect-meetup-backend
-
-# Deploy to Cloud Run
-gcloud run deploy appdirect-meetup-backend \
-  --image gcr.io/$PROJECT_ID/appdirect-meetup-backend \
-  --platform managed \
-  --region asia-south1 \
-  --allow-unauthenticated \
-  --set-env-vars="GOOGLE_APPLICATION_CREDENTIALS=" \
-  --memory=512Mi \
-  --cpu=1 \
-  --max-instances=10
-```
-
-### 3. Deploy Frontend
-
-```bash
-cd frontend
-
-# Get the backend URL from previous deployment
-export BACKEND_URL=$(gcloud run services describe appdirect-meetup-backend --region=asia-south1 --format="value(status.url)")
-
-# Build and push to Google Container Registry
-gcloud builds submit --tag gcr.io/$PROJECT_ID/appdirect-meetup-frontend
-
-# Deploy to Cloud Run
-gcloud run deploy appdirect-meetup-frontend \
-  --image gcr.io/$PROJECT_ID/appdirect-meetup-frontend \
-  --platform managed \
-  --region asia-south1 \
-  --allow-unauthenticated \
-  --set-env-vars="REACT_APP_BACKEND_URL=$BACKEND_URL" \
-  --memory=256Mi \
-  --cpu=1 \
-  --max-instances=5
-```
-
-### 4. Get Application URLs
-
-```bash
-# Get frontend URL
-gcloud run services describe appdirect-meetup-frontend --region=asia-south1 --format="value(status.url)"
-
-# Get backend URL
-gcloud run services describe appdirect-meetup-backend --region=asia-south1 --format="value(status.url)"
-```
-
-## 🔧 Configuration
-
-### Environment Variables
-
-#### Backend
-- `PORT`: Server port (default: 8080)
-- `GOOGLE_APPLICATION_CREDENTIALS`: Path to service account key (local only)
-
-#### Frontend
-- `REACT_APP_BACKEND_URL`: Backend API URL
-
-### Firestore Setup
-
-1. Create a Firestore database in your Google Cloud Project
-2. The application will automatically create a `registrations` collection
-3. No additional configuration required
+**Event Details**:
+- **Date**: November 22, 2025 (Saturday)
+- **Time**: 10:00 AM - 2:00 PM IST
+- **Location**: Magarpatta City, Pune, Maharashtra, India
 
 ## 📊 API Endpoints
+
+### GET /
+Serves the React frontend application
+
+### GET /health
+Health check endpoint
+
+**Response:**
+```json
+{
+  "status": "healthy",
+  "service": "AppDirect India Meetup 2025 Backend",
+  "timestamp": "2025-10-03T09:53:35Z"
+}
+```
 
 ### POST /api/register
 Register a new attendee
@@ -216,7 +105,7 @@ Register a new attendee
 ```json
 {
   "message": "Registration successful",
-  "id": "document-id"
+  "id": "1"
 }
 ```
 
@@ -227,51 +116,165 @@ Get all registrations (admin endpoint)
 ```json
 [
   {
-    "id": "document-id",
+    "id": "1",
     "name": "John Doe",
     "email": "john@example.com",
     "company": "Tech Corp",
     "role": "Software Engineer",
-    "createdAt": "2024-03-15T10:30:00Z"
+    "createdAt": "2025-10-03T10:30:00Z"
   }
 ]
 ```
 
-### GET /health
-Health check endpoint
+## 🛠️ Local Development
 
-**Response:**
-```json
-{
-  "status": "healthy"
-}
+### Prerequisites
+
+- Node.js 18+ and npm
+- Go 1.21+
+- Git
+
+### Quick Start
+
+```bash
+# Clone the repository
+git clone https://github.com/Nikita-Mourya-AD/india-meetup-2025.git
+cd india-meetup-2025
+
+# Run the demo script
+./demo.sh
 ```
 
-## 🎯 Features
+### Manual Setup
 
-### Frontend
-- ✅ Responsive hero section with event details
-- ✅ Registration form with validation
-- ✅ Success message with registration details
-- ✅ Blue & white professional theme
-- ✅ Mobile-friendly design
-- ✅ Loading states and error handling
+#### 1. Backend Setup
 
-### Backend
-- ✅ REST API with CORS support
-- ✅ Firestore integration
-- ✅ Input validation
-- ✅ Error handling
-- ✅ Health check endpoint
-- ✅ Admin endpoint for viewing registrations
+```bash
+# Install Go dependencies
+go mod tidy
 
-## 🔒 Security
+# Run the server
+go run main.go
+```
 
-- CORS configured for cross-origin requests
-- Input validation on all endpoints
-- Environment-based configuration
-- Service account authentication for Firestore
-- Security headers in nginx configuration
+#### 2. Frontend Setup
+
+```bash
+cd frontend
+
+# Install dependencies
+npm install
+
+# Start development server
+npm start
+```
+
+The application will be available at:
+- **Frontend**: http://localhost:3000
+- **Backend**: http://localhost:8080
+
+## 🐳 Docker Deployment
+
+### Build and Run Locally
+
+```bash
+# Build the Docker image
+docker build -t india-meetup-2025 .
+
+# Run the container
+docker run -p 8080:8080 india-meetup-2025
+```
+
+## ☁️ Google Cloud Run Deployment
+
+### Prerequisites
+
+- Google Cloud Project with billing enabled
+- Cloud Run API enabled
+- GitHub repository connected
+
+### Deployment Steps
+
+1. **Go to Cloud Run Console**:
+   - Visit: https://console.cloud.google.com/run
+   - Select project: `india-tech-meetup-2025`
+
+2. **Create Service**:
+   - Click "Create Service"
+   - Choose "Deploy from source repository"
+   - Connect GitHub account
+   - Select: `Nikita-Mourya-AD/india-meetup-2025`
+   - Branch: `main`
+
+3. **Configure Build**:
+   - Service name: `india-meetup-2025`
+   - Region: Choose your preferred region
+   - **Build type**: Use Dockerfile
+   - Authentication: Allow unauthenticated invocations
+
+4. **Deploy!**
+
+### Alternative: Manual Deployment
+
+```bash
+# Set your project ID
+export PROJECT_ID="india-tech-meetup-2025"
+gcloud config set project $PROJECT_ID
+
+# Build and deploy
+gcloud run deploy india-meetup-2025 \
+  --source . \
+  --platform managed \
+  --region europe-west1 \
+  --allow-unauthenticated \
+  --memory=512Mi \
+  --cpu=1 \
+  --max-instances=10
+```
+
+## 🎯 Tech Stack
+
+- **Frontend**: React 18 + TailwindCSS + Axios
+- **Backend**: Go 1.21 + Gorilla Mux + CORS
+- **Database**: In-memory storage (production-ready for Firestore)
+- **Deployment**: Docker + Google Cloud Run
+- **Styling**: Navy blue theme with responsive design
+
+## 🔧 Configuration
+
+### Environment Variables
+
+- `PORT`: Server port (default: 8080)
+- `REACT_APP_BACKEND_URL`: Backend API URL (for separate deployments)
+
+### Build Process
+
+The application uses a multi-stage Docker build:
+1. **Build Stage**: Compiles Go backend and React frontend
+2. **Runtime Stage**: Serves both frontend and API from single service
+
+## 🚀 Development Workflow
+
+### Adding New Features
+
+1. **Frontend**: Add new components in `frontend/src/components/`
+2. **Backend**: Add new endpoints in `main.go`
+3. **Styling**: Use TailwindCSS classes for consistent design
+4. **Build**: Run `npm run build` in frontend directory
+5. **Deploy**: Push to GitHub for automatic Cloud Run deployment
+
+### Testing
+
+```bash
+# Test backend API
+./test-backend.sh
+
+# Run demo
+./demo.sh
+
+# Build for production
+./build.sh
+```
 
 ## 📱 Responsive Design
 
@@ -280,25 +283,22 @@ The application is fully responsive and works on:
 - Tablet (768px - 1199px)
 - Mobile (320px - 767px)
 
-## 🛠️ Development
+## 🔒 Security
 
-### Adding New Features
+- CORS configured for cross-origin requests
+- Input validation on all endpoints
+- Environment-based configuration
+- Security headers in production build
 
-1. **Frontend**: Add new components in `frontend/src/components/`
-2. **Backend**: Add new endpoints in `backend/main.go`
-3. **Styling**: Use TailwindCSS classes for consistent design
+## 🎉 Workshop Features
 
-### Testing
-
-```bash
-# Frontend tests
-cd frontend
-npm test
-
-# Backend tests (if added)
-cd backend
-go test ./...
-```
+Perfect for demonstrating:
+- Full-stack development with modern technologies
+- Cloud Run deployment best practices
+- Docker containerization
+- React production builds
+- Single service architecture
+- GitHub integration with Cloud Run
 
 ## 📞 Support
 
@@ -309,3 +309,7 @@ For issues or questions:
 ## 📄 License
 
 This project is proprietary to AppDirect Inc.
+
+---
+
+**🌟 Live Demo**: https://india-meetup-2025-1041941408881.europe-west1.run.app
